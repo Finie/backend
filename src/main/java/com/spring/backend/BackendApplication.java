@@ -8,17 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class BackendApplication implements CommandLineRunner {
-
-	private UserProfileRepository userProfileRepository;
-
-
-
-
-	@Autowired
-	public void  userProfileRepository(UserProfileRepository userProfileRepository) {
-		this.userProfileRepository = userProfileRepository;
-	}
+public class BackendApplication {
 
 
 
@@ -26,36 +16,6 @@ public class BackendApplication implements CommandLineRunner {
 		SpringApplication.run(BackendApplication.class, args);
 	}
 
-
-
-
-	@Override
-	public void run(String... args) throws Exception {
-
-
-		var profile = new UserProfile();
-
-		profile.setName("Phenius Muthomi");
-		profile.setBalance(12000.00);
-		profile.setType("ADMIN");
-		profile.setDescription("Hello, this is an example description added");
-		userProfileRepository.save(profile);
-
-
-
-
-
-		var profile2 = new UserProfile();
-
-		profile2.setName("Amelina Vutagwa");
-		profile2.setBalance(70000.00);
-		profile2.setType("ADMIN");
-		profile2.setDescription("Hello, this is an example description added");
-		userProfileRepository.save(profile2);
-
-
-
-	}
 
 
 
