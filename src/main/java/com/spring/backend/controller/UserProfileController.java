@@ -1,9 +1,10 @@
 package com.spring.backend.controller;
 
 
+import com.spring.backend.dto.NetworkResponseDTO;
 import com.spring.backend.models.UserProfile;
-import com.spring.backend.repository.UserProfileRepository;
-import org.apache.catalina.User;
+import com.spring.backend.services.UserProfileService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,74 +15,44 @@ import java.util.List;
 @RequestMapping(path = "/api/user/")
 public class UserProfileController {
 
-    private UserProfileRepository userProfileRepository;
+
+    private UserProfileService userProfileService;
 
 
     @Autowired
-    public void userProfileRepository(UserProfileRepository userProfileRepository) {
-        this.userProfileRepository = userProfileRepository;
+    public void setUserProfileService(UserProfileService userProfileService) {
+        this.userProfileService = userProfileService;
     }
-
 
 
     @RequestMapping(method = RequestMethod.POST)
-    public UserProfile createUser(@RequestBody UserProfile userProfile){
-        return userProfileRepository.save(userProfile);
+    public NetworkResponseDTO<UserProfile> createUser(@Valid @RequestBody UserProfile userProfile) {
+        return userProfileService.createUser(userProfile);
     }
 
 
-
     @RequestMapping(method = RequestMethod.GET)
-    public List<UserProfile> getAllUsers(){
-        return userProfileRepository.findAll();
+    public NetworkResponseDTO<List<UserProfile>> getAllUsers() {
+        return userProfileService.fetchAllUsers();
     }
 
 
     @RequestMapping(path = "{id}", method = RequestMethod.GET)
-    public UserProfile getUserById(@PathVariable String id){
-
-        return  userProfileRepository.findById(id).get();
-
+    public NetworkResponseDTO<UserProfile> getUserById(@PathVariable String id) {
+        return userProfileService.findUserById(id);
     }
 
 
-
     @RequestMapping(path = "{id}", method = RequestMethod.PUT)
-    public UserProfile updateUser(@RequestBody UserProfile userProfile, @PathVariable String id){
-
-        var userAvailable = userProfileRepository.findById(id);
-
-        if (userAvailable.isPresent()){
-            var profile = userAvailable.get();
-            profile.setName(userProfile.getName());
-            profile.setType(userProfile.getType());
-            profile.setBalance(userProfile.getBalance());
-            profile.setDescription(userProfile.getDescription());
-
-            return userProfileRepository.save(profile);
-        }
-
-        return userProfile;
+    public NetworkResponseDTO<UserProfile> updateUser(@RequestBody UserProfile userProfile, @PathVariable String id) {
+        return userProfileService.updateUserById(userProfile, id);
     }
 
 
     @RequestMapping(path = "{id}", method = RequestMethod.DELETE)
-    public void deleteUser(@PathVariable String id){
-
-        var userAvailable = userProfileRepository.findById(id);
-
-        userAvailable.ifPresent(
-                userProfile -> {
-                   userProfileRepository.delete(userProfile);
-                }
-        );
-
-
+    public void deleteUser(@PathVariable String id) {
+      userProfileService.deleteUserById(id);
     }
-
-
-
-
 
 
 }
