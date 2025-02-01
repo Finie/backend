@@ -1,9 +1,9 @@
 package com.spring.backend.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import org.hibernate.annotations.UuidGenerator;
 
 @Entity
@@ -14,10 +14,26 @@ public class UserProfile {
     @GeneratedValue
     @UuidGenerator
     private String id;
+
+    @NotNull(message = "Name can not be null")
     private String name;
+
+
+    @PositiveOrZero(message = "Balance can not be less than zero")
     private double balance;
+
+
+    @NotNull(message = "Description can not be null")
     private String description;
+
+
+    @NotNull(message = "Type can not be null")
     private String type;
+
+
+    @NotNull(message = "Email is a required field")
+    @Column(unique = true)
+    private String email;
 
 
     public String getId() {
@@ -60,15 +76,23 @@ public class UserProfile {
         this.type = type;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     @Override
     public String toString() {
         return "UserProfile{" +
-                "id=" + id +
+                "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", balance=" + balance +
                 ", description='" + description + '\'' +
                 ", type='" + type + '\'' +
+                ", email='" + email + '\'' +
                 '}';
     }
 }
