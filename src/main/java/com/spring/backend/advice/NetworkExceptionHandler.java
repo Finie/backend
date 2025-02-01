@@ -3,6 +3,7 @@ package com.spring.backend.advice;
 
 import com.spring.backend.dto.NetworkResponseDTO;
 import com.spring.backend.exceptions.ResourceNotFoundException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 
-import java.time.LocalDateTime;
 import java.util.Objects;
 
 @RestControllerAdvice
@@ -56,6 +56,28 @@ public class NetworkExceptionHandler {
         return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
 
     }
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<NetworkResponseDTO<Void>> constraintViolationHandler(DataIntegrityViolationException exception, WebRequest request){
+
+        String detailedMessage = exception.getCause().getMessage();
+
+
+        if (detailedMessage != null && detailedMessage.contains("Unique index or primary key violation")) {
+            detailedMessage = "Email is already in use. Please use a different email address.";
+        }
+
+        NetworkResponseDTO<Void> responseDTO = new NetworkResponseDTO<>();
+        responseDTO.setStatus(HttpStatus.BAD_REQUEST.value());
+        responseDTO.setError("Bad request");
+        responseDTO.setMessage(detailedMessage);
+        responseDTO.setData(null);
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.BAD_REQUEST);
+
+    }
+
 
 
 }
