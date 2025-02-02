@@ -1,5 +1,6 @@
 package com.spring.backend.middleware;
 
+import com.spring.backend.exceptions.UnAuthorizedException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,10 +17,8 @@ public class ApiInterceptor implements HandlerInterceptor {
      * contains an apiKey
      * */
 
-
     @Value("${api.key}")
     private String valid_key;
-
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -30,14 +29,10 @@ public class ApiInterceptor implements HandlerInterceptor {
         System.out.println("Current key: "+valid_key);
 
         if (apiKey == null || !apiKey.equals(valid_key)) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("UnAuthorized: invalid api key, interaction violation!");
-            return false;
+            throw new UnAuthorizedException("Invalid api-key: "+ apiKey);
         }
 
          return true;
-
     }
-
 
 }

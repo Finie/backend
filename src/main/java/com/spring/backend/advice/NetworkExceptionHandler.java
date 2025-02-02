@@ -3,6 +3,7 @@ package com.spring.backend.advice;
 
 import com.spring.backend.dto.NetworkResponseDTO;
 import com.spring.backend.exceptions.ResourceNotFoundException;
+import com.spring.backend.exceptions.UnAuthorizedException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,20 @@ public class NetworkExceptionHandler {
         responseDTO.setMessage(exception.getMessage());
 
         return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
+    }
+
+
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity<NetworkResponseDTO<Void>> handleUnAuthorizedAccessException(UnAuthorizedException exception, WebRequest request){
+
+        NetworkResponseDTO<Void> responseDTO = new NetworkResponseDTO<>();
+        responseDTO.setStatus(HttpStatus.UNAUTHORIZED.value());
+        responseDTO.setError("unauthorized access!");
+        responseDTO.setData(null);
+        responseDTO.setMessage(exception.getMessage());
+
+        return new ResponseEntity<>(responseDTO, HttpStatus.NOT_FOUND);
+
     }
 
 
